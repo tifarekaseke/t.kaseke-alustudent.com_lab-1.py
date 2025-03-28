@@ -1,19 +1,14 @@
-import re
-
 class Essay:
-    def __init__(self, file_path):
-        self.words = self.load_words(file_path)
-
-    def load_words(self, file_path):
-        """Load the essay from a file and return a set of words."""
-        with open(file_path, 'r') as file:
-            text = file.read()
-        return self.clean_and_split(text)
+    def __init__(self, text):
+        self.words = self.clean_and_split(text)
 
     def clean_and_split(self, text):
         """Remove punctuation and split the text into a set of words."""
-        text = re.sub(r'[^\w\s]', '', text)  # Remove punctuation
-        return set(text.lower().split())      # Convert to lowercase and use a set
+        cleaned_text = ''
+        for char in text:
+            if char.isalnum() or char.isspace():  # Keep alphanumeric characters and spaces
+                cleaned_text += char.lower()  # Convert to lowercase
+        return set(cleaned_text.split())  # Convert to a set of words
 
 class PlagiarismDetector:
     def __init__(self, essay1, essay2):
@@ -38,9 +33,16 @@ class PlagiarismDetector:
         return (len(common_words) / len(unique_words)) * 100
 
 def main():
-    # Load essays from text files
-    essay1 = Essay('essay1.txt')
-    essay2 = Essay('essay2.txt')
+    # Loading content of file 1 and file 2
+    with open("essay-1.txt", "r") as file_1:
+        data_1 = file_1.read().lower()
+
+    with open("essay-2.txt", "r") as file_2:
+        data_2 = file_2.read().lower()
+
+    # Create Essay objects from the loaded data
+    essay1 = Essay(data_1)
+    essay2 = Essay(data_2)
 
     # Create a plagiarism detector
     detector = PlagiarismDetector(essay1, essay2)
